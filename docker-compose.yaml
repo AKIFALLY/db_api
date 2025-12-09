@@ -1,0 +1,62 @@
+services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+  #    - ~/agvc/nginx:/etc/nginx/conf.d:ro
+      - ~/RosAGV/nginx:/etc/nginx/conf.d:ro
+      # 新增：直接掛載說明文件目錄
+      - ~/RosAGV/design/business-process-docs:/usr/share/nginx/html/docs:ro
+      # 新增：掛載 docs-ai 目錄供 AI 知識庫使用
+      - ~/RosAGV/docs-ai:/usr/share/nginx/html/docs-ai:ro
+    restart: always
+    networks:
+      bridge_network:
+        ipv4_address: 192.168.100.252 # 固定 IP
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres #claude 很容易搞混(容器名稱跟容器)，所以我們直接把他們名稱改為一樣減少出錯機會
+    init: true  # 使用 Docker 的 init 進程，自動回收殭屍進程
+    restart: always
+    networks:
+      bridge_network:
+        ipv4_address: 192.168.100.254 # 固定 IP
+    environment:
+      POSTGRES_USER: agvc # 系統管理員帳號 (我們直接 建立agvc的帳號密碼都設定在這裡 
+      POSTGRES_PASSWORD: 36274806 # 系統管理員密碼
+      POSTGRES_DB: agvc # 預設資料庫
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql # PostgreSQL 數據存储 (18+ 格式)
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin #claude 很容易搞混(容器名稱跟容器)，所以我們直接把他們名稱改為一樣減少出錯機會
+    restart: always
+    networks:
+      bridge_network:
+        ipv4_address: 192.168.100.101 # 固定 IP
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ct@ching-tech.com # 登入 pgAdmin 的帳號 (必須是 email 格式)
+      PGADMIN_DEFAULT_PASSWORD: 36274806 # 登入 pgAdmin 的密碼
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin # ✅ pgAdmin 配置存儲
+
+volumes:
+  postgres_data:
+  pgadmin_data:
+    # ✅ 定義 pgAdmin 數據卷
+
+networks:
+  bridge_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.100.0/24
+          gateway: 192.168.100.1

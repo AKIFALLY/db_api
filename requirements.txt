@@ -1,0 +1,10 @@
+# 資料庫驅動
+psycopg2-binary
+
+# ORM 和資料驗證
+sqlmodel
+
+# FastAPI 框架
+fastapi
+uvicorn[standard]
+pydantic-settings
