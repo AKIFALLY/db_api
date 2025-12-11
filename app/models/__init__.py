@@ -3,5 +3,6 @@
 """
 from .agv import AGV
 from .eqp_port import EqpPort
+from .task import Task
 
-__all__ = ["AGV", "EqpPort"]
+__all__ = ["AGV", "EqpPort", "Task"]

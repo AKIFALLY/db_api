@@ -43,6 +43,7 @@ nul
 
 # Logs
 *.log
+logs/
 
 # Environment variables
 .env

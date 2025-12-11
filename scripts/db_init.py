@@ -15,7 +15,7 @@ sys.path.insert(0, str(ROOT_DIR))
 
 import psycopg2
 from sqlmodel import SQLModel, create_engine
-from app.models import AGV, EqpPort
+from app.models import AGV, EqpPort, Task
 
 # 從 docker-compose.yaml 讀取的資料庫連線資訊
 DB_CONFIG = {

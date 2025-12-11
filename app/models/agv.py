@@ -37,7 +37,7 @@ class AGV(SQLModel, table=True):
 
     # 參數設定（JSON 欄位）
     parameter: Optional[Dict[str, Any]] = Field(
-        default=None,
+        default_factory=lambda: {"ip": "", "port": 0, "work_id": 0},
         sa_column=Column(JSON),
         description="AGV 參數設定（JSON 格式）"
     )

@@ -6,9 +6,15 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 import json
+import logging
 
 from app.core.config import settings
-from app.api.v1 import agv, eqp_port
+from app.core.logging_config import setup_logging
+from app.api.v1 import agv, eqp_port, task
+
+# 設置日志
+setup_logging()
+logger = logging.getLogger("app")
 
 # 建立 FastAPI 應用
 app = FastAPI(
@@ -101,6 +107,12 @@ app.include_router(
     tags=["EqpPort"]
 )
 
+app.include_router(
+    task.router,
+    prefix=f"{settings.API_V1_PREFIX}/task",
+    tags=["Task"]
+)
+
 
 # 啟動事件
 @app.on_event("startup")
@@ -108,6 +120,9 @@ async def startup_event():
     """
     應用啟動時執行
     """
+    logger.info(f"[啟動] {settings.PROJECT_NAME} v{settings.VERSION}")
+    logger.info(f"[文檔] API Docs: http://localhost:8000/docs")
+    logger.info(f"[文檔] ReDoc: http://localhost:8000/redoc")
     print(f"[啟動] {settings.PROJECT_NAME} v{settings.VERSION}")
     print(f"[文檔] API Docs: http://localhost:8000/docs")
     print(f"[文檔] ReDoc: http://localhost:8000/redoc")
