@@ -6,6 +6,8 @@ AGV API 路由
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session
 from typing import List
+import time
+from datetime import datetime
 
 from app.core.database import get_session
 from app.models import AGV
@@ -188,3 +190,37 @@ def count_agvs(
     """
     count = crud_agv.count_agvs(session, enabled_only=enabled_only)
     return {"total": count, "enabled_only": enabled_only}
+
+
+@router.get("/test/slow-query")
+def test_slow_query(seconds: int = 10):
+    """
+    測試慢查詢 - 模擬資料庫查詢耗時
+
+    用途：驗證在慢查詢執行期間，其他 API 請求是否仍能被處理
+
+    測試方法：
+    1. 開啟瀏覽器 A，訪問 /api/v1/agv/test/slow-query?seconds=10
+    2. 立即開啟瀏覽器 B，訪問 /api/v1/agv/ （快速查詢）
+    3. 如果瀏覽器 B 立即返回結果，證明可以併發處理
+
+    - **seconds**: 模擬查詢耗時（秒），預設 10 秒
+    """
+    start_time = datetime.now()
+    print(f"[慢查詢開始] {start_time.strftime('%H:%M:%S')} - 將耗時 {seconds} 秒")
+
+    # 模擬慢查詢（例如複雜的 JOIN 或大量資料處理）
+    time.sleep(seconds)
+
+    end_time = datetime.now()
+    elapsed = (end_time - start_time).total_seconds()
+
+    print(f"[慢查詢結束] {end_time.strftime('%H:%M:%S')} - 實際耗時 {elapsed:.2f} 秒")
+
+    return {
+        "message": "慢查詢測試完成",
+        "start_time": start_time.strftime('%Y-%m-%d %H:%M:%S'),
+        "end_time": end_time.strftime('%Y-%m-%d %H:%M:%S'),
+        "elapsed_seconds": elapsed,
+        "note": "如果在此查詢執行期間，其他 API 仍能回應，代表 FastAPI 線程池正常工作"
+    }

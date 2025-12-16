@@ -37,14 +37,17 @@ echo.
 REM Start FastAPI Server (Development mode)
 echo [START] Starting FastAPI Server...
 echo [MODE] Development mode (auto-reload enabled)
+echo [HOST] Binding to all interfaces (0.0.0.0)
 echo [URL] http://localhost:8000
+echo [URL] http://192.168.12.99:8000
 echo [DOCS] http://localhost:8000/docs
+echo [DOCS] http://192.168.12.99:8000/docs
 echo.
 echo [TIP] Press Ctrl+C to stop the server
 echo ============================================
 echo.
 
-python -m uvicorn app.main:app --reload --port 8000
+python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
 REM Server stopped
 echo.

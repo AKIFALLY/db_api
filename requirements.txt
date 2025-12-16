@@ -1,3 +1,30 @@
+這邊主要是紀錄windows要安裝的部分
+
+## Windows 安裝步驟
+
+### 1. 確認 Python 版本
+# 在 CMD 或 PowerShell 中執行：
+python --version
+# 應顯示: Python 3.13.9
+
+### 2. 使用 pip 安裝所有套件
+# 在專案根目錄 (db_api) 執行：
+pip install -r requirements.txt
+
+### 3. 驗證安裝
+# 執行以下指令確認套件已成功安裝：
+pip list
+
+### 4. 個別安裝（選用）
+# 如果需要單獨安裝特定套件，可執行：
+# pip install psycopg2-binary
+# pip install sqlmodel
+# pip install fastapi
+# pip install "uvicorn[standard]"
+# pip install pydantic-settings
+
+## 套件列表
+
 # 資料庫驅動
 psycopg2-binary
 
@@ -8,3 +35,6 @@ sqlmodel
 fastapi
 uvicorn[standard]
 pydantic-settings
+
+
+Python 3.13.9
